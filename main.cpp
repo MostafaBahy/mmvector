@@ -1,20 +1,39 @@
 #include <bits/stdc++.h>
 using namespace std;
-template<typename T>
 
+
+
+template<typename T>
 class mmVector
 {
 private:
 
-    T *ptr;
-    int vecSize;
-    int vecCapacity;
+    T *ptr = nullptr;
+    int vecSize = 0;
+    int vecCapacity = 0;
+    void reAlloc(int newCap)
+    {
+        T* newVec = new T[newCap];
+
+        if(newCap<vecSize)
+            vecSize = newCap;
+
+        for(int i = 0 ; i < vecSize ; i++)
+            newVec[i] = ptr[i];
+        delete [] ptr;
+        ptr=newVec;
+        vecCapacity=newCap;
+    }
 
 public:
+    mmVector()//empty constructor
+    {
+        ptr = new T[1];
+        vecCapacity = 1;
+        vecSize = 0;
+    }
 
-    mmVector(){}
-
-    mmVector (int x)//constructor
+    mmVector (int x)//parametrized constructor
     {
         ptr = new T[x];
         vecCapacity = x;
@@ -43,22 +62,12 @@ public:
     }
 
 
-    void push_back(T data)
+    void push_back(const T& data) //adds data t our vector
     {
 
-        if (vecSize == vecCapacity)
-        {
-            T* temp = new T[2 * vecCapacity];
+        if (vecSize >= vecCapacity)
+            reAlloc(2*vecCapacity);
 
-            // copying old array elements to new array
-            for (int i = 0; i < vecCapacity; i++)
-                temp[i] = ptr[i];
-            // deleting previous array
-            delete[] ptr;
-            vecCapacity *= 2;
-            ptr = temp;
-            delete[] temp;
-        }
 
         // Inserting data
         ptr[vecSize] = data;
@@ -72,9 +81,7 @@ public:
         return vecCapacity;
     }
 
-
-
-    T& operator[](int index)
+    T& operator[](int index) //overloads the [] operator
     {
         if (index >= vecSize)
         {
@@ -98,28 +105,46 @@ public:
 
     mmVector &operator=(const mmVector& myVec )  // Copy assignment
     {
+        cout<<"Copy assignment"<<endl;
         delete[] this->ptr ;
         this->vecCapacity = myVec.vecCapacity;
         this->vecSize = myVec.vecSize;
         this->ptr = new T[vecCapacity];
         for(int i =0 ; i< myVec.vecSize;i++)
-            this->ptr[i]= myVec[i];
+            this->ptr[i]= myVec.ptr[i];
 
         return *this;
     }
 
 
-
-
-    mmVector(const mmVector& myVec ){
-
+    mmVector(const mmVector& myVec ) //copy constructor
+    {
+        cout<<"copy constrcutor"<<endl;
         vecCapacity = myVec.vecCapacity;
         vecSize = myVec.vecSize;
         ptr = new T[vecCapacity];
         for(int i =0 ; i< myVec.vecSize;i++)
-            ptr[i]= myVec[i];
+            ptr[i]= myVec.ptr[i];
 
     }
+
+    mmVector& operator=( mmVector&& other) noexcept// Move assignment
+    {
+        cout<<"Move assignment"<<endl;
+        vecCapacity = other.vecCapacity;
+        vecSize = other.vecSize;
+        delete[] ptr;
+        ptr = other.ptr;
+        for(int i =0 ; i< other.vecSize;i++)
+            ptr[i]= other.ptr[i];
+        other.ptr= nullptr;
+        other.vecCapacity=0;
+        other.vecSize=0;
+        //return *this;
+
+
+    }
+
 
     bool operator==(const mmVector<T>&myVec)// Return true if ==
     {
@@ -127,9 +152,9 @@ public:
             return false;
         else
         {
-            for(int i =0 ; i< myVec.vecSize;i++)
+            for(int i =0 ; i< myVec.vecSize ; i++)
             {
-                if(this->ptr[i]!= myVec[i])
+                if(this->ptr[i] != myVec.ptr[i])
                     return false;
             }
             return true;
@@ -141,36 +166,40 @@ public:
     T pop_back()// Remove and return last element in vec
     {
         T popped = this->ptr[vecSize-1];
-        vecSize--;
+        if(vecSize>0) {
+            vecSize--;
+            this->ptr[vecSize-1].~T();
+        }
         return popped;
     }
 
     mmVector (T* arr[] , int  n )    // Initialize by n items from array
     {
-       vecCapacity = n;
-       vecSize = n;
-       ptr = new T[n];
-       for (int i = 0 ; i < sizeof(arr)/sizeof(arr[0]);i++ )
-       {
-           ptr[i] = arr[i];
-       }
+        vecCapacity = n;
+        vecSize = n;
+        ptr = new T[n];
+        for (int i = 0 ; i < sizeof(arr)/sizeof(arr[0]);i++ )
+        {
+            ptr[i] = arr[i];
+        }
     }
 
+//    bool operator< (const mmVector<T>&v) // Compares item by item
+//    // Return true if first different item in this is < in other
+//    {
+//        // bool check = false;
+//        int sz= min(v.vecSize,this->vecSize);
+//        for(int i = 0 ; i < sz ; i++ )
+//        {
+//            if( this->ptr[i] != v.ptr[i] && this->ptr[i] < v.ptr[i])
+//                return true;
+//
+//        }
+//
+//        return false;
+//    }
 
-
-    /* mmVector &operator=(const mmVector&&)// Move assignment
-     {
-         delete[] this.ptr ;
-         this.vecCapacity = mmVector.vecCapacity;
-         this.vecSize = mmVector.vecSize;
-         this.ptr = new T[vecCapacity];
-         for(int i =0 ; i< mmVector.vecSize;i++)
-             this.ptr[i]= mmVector[i];
-             return *this;
-     }*/
-
-
- int resize()         // Relocate to bigger space
+    int resize()         // Relocate to bigger space
     {
         T* temp = new T[2 * vecCapacity];
         // copying old array elements to new array
@@ -185,21 +214,50 @@ public:
     }
 
 
-
+    //friend ostream& operator<< (ostream& out, const mmVector<T>&v);
 
 };
+
+
+//template <typename T>
+//ostream& operator<<(ostream& out,  const mmVector<T>& v)
+//{
+//    out << "[";
+//    for (int i = 0; i < v.vecSize(); ++i) {
+//        out << v[i];
+//        if (i != v.vecSize() - 1)
+//            out << ", ";
+//    }
+//    out << "]\n";
+//    return out;
+//}
+
 
 
 int main()
 {
     mmVector<int>vec(4);
-    cout<<vec.capacity()<<endl;
-    cout<<vec.size()<<endl;
-    vector<int>vect(4);
-    cout<<vect.capacity()<<endl;
     vec.push_back(1);
     vec.push_back(3);
     vec.push_back(0);
+    vec.push_back(9);
+    vec.push_back(0);
+    cout<<vec.capacity()<<endl;
+    cout<<vec.size()<<endl;
+    for(int i=0 ; i <vec.size();i++)
+        cout<<vec[i]<<" ";
+    cout<<endl;
+    cout<< vec.pop_back()<<endl;
+    for(int i=0 ; i <vec.size();i++)
+        cout<<vec[i]<<" ";
 
-
+    mmVector<int>vec2(4);
+    vec.push_back(1);
+    vec.push_back(3);
+    vec.push_back(0);
+    vec.push_back(0);
+    vec.push_back(0);
+//    bool check = (vec < vec2);
+//    cout<<check <<endl;
+    
 }
