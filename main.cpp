@@ -186,8 +186,7 @@ public:
             ptr[i] = arr[i];
         }
     }
-
-    bool operator< (const mmVector<T>&v) // Compares item by item
+ bool operator< (const mmVector<T>&v) // Compares item by item
     // Return true if first different item in this is < in other
     {
         // bool check = false;
@@ -196,10 +195,10 @@ public:
         {
             if( this->ptr[i] != v.ptr[i] && this->ptr[i] < v.ptr[i])
                 return true;
-
+            else if( this->ptr[i] != v.ptr[i] && this->ptr[i] > v.ptr[i])
+              return false;
         }
 
-        return false;
     }
 
     int resize()         // Relocate to bigger space
@@ -274,11 +273,14 @@ int main()
 
     vec.push_back(1);
     vec.push_back(3);
-    vec2.push_back(1);
+    vec2.push_back(7);
     vec2.push_back(3);
-    int check = ( vec2==vec );
-    cout<<"check if the two vectors are equal : "<<check<<endl;
+    int check = ( vec2 == vec );
+    cout<<"check if  vec2 == vec : "<<check<<endl;
 
+    check = ( vec2 < vec );
+    cout<<"check if  vec2 < vec  : "<<check<<endl;
+    
     /*
     vec2=vec;
     cout<<"vec2 capacity after copy assignment = "<<vec2.capacity()<<endl;
@@ -290,5 +292,6 @@ int main()
 
     //int arr[4]={1,2,3,4};
     //mmVector<int>vec4(arr , 2);
+
 
 }
