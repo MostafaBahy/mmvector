@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
-
 template<typename T>
 class mmVector
 {
@@ -25,7 +23,9 @@ private:
         vecCapacity=newCap;
     }
 
+
 public:
+
     mmVector()//empty constructor
     {
         ptr = new T[1];
@@ -81,6 +81,8 @@ public:
         return vecCapacity;
     }
 
+
+
     T& operator[](int index) //overloads the [] operator
     {
         if (index >= vecSize)
@@ -110,6 +112,7 @@ public:
         this->vecCapacity = myVec.vecCapacity;
         this->vecSize = myVec.vecSize;
         this->ptr = new T[vecCapacity];
+        // this->reAlloc(myVec.vecCapacity);
         for(int i =0 ; i< myVec.vecSize;i++)
             this->ptr[i]= myVec.ptr[i];
 
@@ -184,20 +187,20 @@ public:
         }
     }
 
-//    bool operator< (const mmVector<T>&v) // Compares item by item
-//    // Return true if first different item in this is < in other
-//    {
-//        // bool check = false;
-//        int sz= min(v.vecSize,this->vecSize);
-//        for(int i = 0 ; i < sz ; i++ )
-//        {
-//            if( this->ptr[i] != v.ptr[i] && this->ptr[i] < v.ptr[i])
-//                return true;
-//
-//        }
-//
-//        return false;
-//    }
+    bool operator< (const mmVector<T>&v) // Compares item by item
+    // Return true if first different item in this is < in other
+    {
+        // bool check = false;
+        int sz= min(v.vecSize,this->vecSize);
+        for(int i = 0 ; i < sz ; i++ )
+        {
+            if( this->ptr[i] != v.ptr[i] && this->ptr[i] < v.ptr[i])
+                return true;
+
+        }
+
+        return false;
+    }
 
     int resize()         // Relocate to bigger space
     {
@@ -236,28 +239,56 @@ public:
 
 int main()
 {
+
     mmVector<int>vec(4);
     vec.push_back(1);
     vec.push_back(3);
     vec.push_back(0);
     vec.push_back(9);
     vec.push_back(0);
-    cout<<vec.capacity()<<endl;
-    cout<<vec.size()<<endl;
+    cout<<"vec1 capacity = "<<vec.capacity()<<endl;
+    cout<<"vec1 size = "<<vec.size()<<endl;
+
     for(int i=0 ; i <vec.size();i++)
         cout<<vec[i]<<" ";
     cout<<endl;
-    cout<< vec.pop_back()<<endl;
-    for(int i=0 ; i <vec.size();i++)
-        cout<<vec[i]<<" ";
+    cout<<"the popped element = "<< vec.pop_back()<<endl;
+    cout<<"vec1 capacity after pop back = "<<vec.capacity()<<endl;
+    cout<<"vec1 size after pop back  = "<<vec.size()<<endl;
 
-    mmVector<int>vec2(4);
+    mmVector<int>vec3(vec);
+    cout<<"vec3 capacity = "<<vec3.capacity()<<endl;
+    cout<<"vec3 size = "<<vec3.size()<<endl;
+
+
+    vec.clear();
+    cout<<"vec1 capacity after clear = "<<vec.capacity()<<endl;
+    cout<<"vec1 size after clear  = "<<vec.size()<<endl;
+
+
+    mmVector<int>vec2;
+    cout<<"check if vec2 is empty aka has no elements : "<< vec2.empty()<<endl;
+    vec2.resize();
+    cout<<"vec2 capacity after resize = "<<vec2.capacity()<<endl;
+    cout<<"vec2 size after resize = "<<vec2.size()<<endl;
+
     vec.push_back(1);
     vec.push_back(3);
-    vec.push_back(0);
-    vec.push_back(0);
-    vec.push_back(0);
-//    bool check = (vec < vec2);
-//    cout<<check <<endl;
-    
+    vec2.push_back(1);
+    vec2.push_back(3);
+    int check = ( vec2==vec );
+    cout<<"check if the two vectors are equal : "<<check<<endl;
+
+    /*
+    vec2=vec;
+    cout<<"vec2 capacity after copy assignment = "<<vec2.capacity()<<endl;
+    cout<<"vec2 size after copy assignment = "<<vec2.size()<<endl;
+    for(int i=0 ; i <vec2.size();i++)
+        cout<<vec2[i]<<" ";
+    cout<<endl;*/
+
+
+    //int arr[4]={1,2,3,4};
+    //mmVector<int>vec4(arr , 2);
+
 }
