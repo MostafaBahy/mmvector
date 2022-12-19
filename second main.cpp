@@ -1,9 +1,6 @@
+
 #include <bits/stdc++.h>
 using namespace std;
-
-
-//template <typename T>
-//ostream& operator<<(ostream& out,  mmVector<T>& v);
 
 template<typename T>
 class mmVector
@@ -47,6 +44,7 @@ public:
 
     ~mmVector()  //deallocating mmvector
     {
+        cout<<"vector deleted"<<endl;
         delete[] ptr;
     }
 
@@ -109,6 +107,7 @@ public:
     }
 
 
+
     mmVector &operator=(const mmVector& myVec )  // Copy assignment
     {
         cout<<"Copy assignment"<<endl;
@@ -129,7 +128,7 @@ public:
         cout<<"copy constrcutor"<<endl;
         vecCapacity = myVec.vecCapacity;
         vecSize = myVec.vecSize;
-        ptr = new T[vecCapacity];
+        ptr = new T[vecSize];
         for(int i =0 ; i< myVec.vecSize;i++)
             ptr[i]= myVec.ptr[i];
 
@@ -153,17 +152,26 @@ public:
     }
 
 
-    bool operator==(const mmVector<T>&myVec)// Return true if ==
+    bool operator == ( const  mmVector<T>&myVec)// Return true if ==
     {
-        if(this->vecSize != myVec.vecSize)
+        if(vecSize != myVec.vecSize)
+        {
+            // cout<<"1"<<endl;
             return false;
+        }
+
         else
         {
-            for(int i =0 ; i< myVec.vecSize ; i++)
+            for(int i = 0 ; i< myVec.vecSize ; i++)
             {
-                if(this->ptr[i] != myVec.ptr[i])
+                if(ptr[i] != myVec.ptr[i])
+                {
+                    // cout<< ptr[i] <<"  "<< myVec.ptr[i]<<endl;
+                    //cout<<"2"<<endl;
                     return false;
+                }
             }
+            // cout<<"3"<<endl;
             return true;
         }
 
@@ -185,27 +193,29 @@ public:
         vecCapacity = n;
         vecSize = n;
         ptr = new T[n];
-        for (int i = 0 ; i < n;i++ )
+        for (int i = 0 ; i < n ; i++ )
         {
             ptr[i] = arr[i];
         }
     }
+
     bool operator< (const mmVector<T>&v) // Compares item by item
     // Return true if first different item in this is < in other
     {
         // bool check = false;
         int sz= min(v.vecSize,this->vecSize);
+
         for(int i = 0 ; i < sz ; i++ )
         {
-            if( this->ptr[i] != v.ptr[i] && this->ptr[i] < v.ptr[i])
+            if(  this->ptr[i] < v.ptr[i])
                 return true;
-            else if( this->ptr[i] != v.ptr[i] && this->ptr[i] > v.ptr[i])
+            else if( this->ptr[i] > v.ptr[i])
                 return false;
         }
-
+        return false;
     }
 
-    int resize()         // Relocate to bigger space
+    int resize()  // Relocate to bigger space
     {
         T* temp = new T[2 * vecCapacity];
         // copying old array elements to new array
@@ -220,7 +230,8 @@ public:
     }
 
 
-    friend ostream& operator<< (ostream& out, mmVector<T> &v){
+    friend ostream& operator<< (ostream& out,  mmVector<T>&v)
+    {
         out << "[";
         for (int i = 0; i < v.vecSize; ++i) {
             out << v[i];
@@ -231,7 +242,10 @@ public:
         return out;
     }
 
+
 };
+
+
 
 
 
@@ -239,84 +253,73 @@ public:
 int main()
 {
 
-
-    int arr[5]={1,2,3,4,5};
-
-
-// test 1
-    mmVector<int> varr(arr,5);
-
-    mmVector<int>vec(4);
-
-    cout<<varr;
-
-    vec.push_back(1);
-    vec.push_back(3);
-    vec.push_back(0);
-    vec.push_back(9);
-    vec.push_back(0);
+    //this part is a test for initializing with a size or with another vector(copy constructor) , push back , pop back
+    //  capacity , size , << overloading  , [] overloading
 
 
-// test 2
-    mmVector<int>vevec(vec);
-    cout<<vevec;
+    mmVector<int>vec1(4);
+    vec1.push_back(1);
+    vec1.push_back(3);
+    vec1.push_back(0);
+    vec1.push_back(8);
+    vec1.push_back(7);
+    cout<<"vec1 capacity = "<<vec1.capacity()<<endl;
+    cout<<"vec1 size = "<<vec1.size()<<endl;
+    cout<<vec1;
+    cout<<"the popped element = "<< vec1.pop_back()<<endl;
+    cout<<"vec1 capacity after pop back = "<<vec1.capacity()<<endl;
+    cout<<"vec1 size after pop back  = "<<vec1.size()<<endl;
+    mmVector<int>vec2(vec1);
+    cout<<vec2;
+    cout<<"firts element in vec2 : " << vec2[0] << endl ;
 
 
-// mostafa have commented this following section to test his code modifications :
+    //--------------------------------------------++--------------------------------------------------
 
-/*
-    cout<<"vec1 capacity = "<<vec.capacity()<<endl;
-    cout<<"vec1 size = "<<vec.size()<<endl;
+    //this part is a test for empty , resize , initializing with elements from an array
 
-    for(int i=0 ; i <vec.size();i++)
-        cout<<vec[i]<<" ";
-    cout<<endl;
-    cout<<"the popped element = "<< vec.pop_back()<<endl;
-    cout<<"vec1 capacity after pop back = "<<vec.capacity()<<endl;
-    cout<<"vec1 size after pop back  = "<<vec.size()<<endl;
+    mmVector<int>vec3;
+    cout<<"check if vec3 is empty aka has no elements : "<< vec3.empty()<<endl;
+    vec3.resize();
+    cout<<"vec3 capacity after resize = "<<vec3.capacity()<<endl;
+    cout<<"vec3 size after resize = "<<vec3.size()<<endl;
 
-    mmVector<int>vec3(vec);
-    cout<<"vec3 capacity = "<<vec3.capacity()<<endl;
-    cout<<"vec3 size = "<<vec3.size()<<endl;
+    vec3.push_back(1);
+    vec3.push_back(2);
+    cout<<"vec3 capacity after push back = "<<vec3.capacity()<<endl;
+    cout<<"vec3 size after push back = "<<vec3.size()<<endl;
+    cout<< vec3;
 
-
-    vec.clear();
-    cout<<"vec1 capacity after clear = "<<vec.capacity()<<endl;
-    cout<<"vec1 size after clear  = "<<vec.size()<<endl;
-
-
-    mmVector<int>vec2;
-    cout<<"check if vec2 is empty aka has no elements : "<< vec2.empty()<<endl;
-    vec2.resize();
-    cout<<"vec2 capacity after resize = "<<vec2.capacity()<<endl;
-    cout<<"vec2 size after resize = "<<vec2.size()<<endl;
-
-    vec.push_back(1);
-    vec.push_back(3);
-    vec2.push_back(7);
-    vec2.push_back(3);
-    int check = ( vec2 == vec );
-    cout<<"check if  vec2 == vec : "<<check<<endl;
-
-    check = ( vec2 < vec );
-    cout<<"check if  vec2 < vec  : "<<check<<endl;
-    */
+    int arr[4]={1,2,3,4};
+    mmVector<int>vec4(arr , 2);
+    cout<<"vec4 capacity = "<<vec4.capacity()<<endl;
+    cout<<"vec4 size = "<<vec4.size()<<endl;
+    cout<<vec4;
 
 
-// until here
 
+    //--------------------------------------------++--------------------------------------------------
 
-    /*
-    vec2=vec;
-    cout<<"vec2 capacity after copy assignment = "<<vec2.capacity()<<endl;
-    cout<<"vec2 size after copy assignment = "<<vec2.size()<<endl;
-    for(int i=0 ; i <vec2.size();i++)
-        cout<<vec2[i]<<" ";
-    cout<<endl;*/
+    //this part is a test for overloading == , overloading < , deep copy assignment
 
+    mmVector<int>vec5;
+    mmVector<int>vec6;
+    vec5.push_back(1);
+    vec5.push_back(2);
+    vec6.push_back(1);
+    vec6.push_back(2);
+    bool check;
+    check = (vec5 == vec6 );
+    cout<<"check if the two vectors are equal : "<<check<<endl;
+    check = (vec5 < vec6 );
+    cout<<"check if vec5 < vec6 : "<< check <<endl;
 
-    //int arr[4]={1,2,3,4};
-    //mmVector<int>vec4(arr , 2);
+    mmVector<int>vec7;
+    mmVector<int>vec8;
+    vec7.push_back(1);
+    vec7.push_back(9);
 
+    vec8 = vec7;
+    cout<<vec8;
 
 }
