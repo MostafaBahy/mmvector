@@ -28,18 +28,18 @@ public:
         return iter;
     }
 
-    Iteratormm& operator+ (int inc)
+    Iteratormm &operator+(int inc)
     {
-        m_ptr + inc;
+      for (int i = 0;i<inc;i++)
+          ++m_ptr;
         return *this;
     }
 
-    int operator- (PointerType dec)
+   long long  operator-(PointerType dec)
     {
-        int x = int( m_ptr - dec);
-        cout<<x;
-        return x;
+        return (m_ptr - dec);
     }
+
 
     ReferenceType operator[](int index)
     {
@@ -214,42 +214,42 @@ public:
     }
 
 
-     void erase(int index)// Remove item at index
-     {
-        if (index < 0 || index >= vecSize)
-        {
-            cout<< "Index out of range";
+
+
+
+
+
+    void erase(iterator i) {// Remove item at index
+
+        long long index = (i - ptr);
+        if (index < 0 || index >= vecSize) {
+            cout << "Index out of range";
             return;
         }
 
-        for (int i = index ; i < vecSize - 1; i++)
-        {
+        for (int i = index; i < vecSize - 1; i++) {
             ptr[i] = ptr[i + 1];
         }
         vecSize--;
     }
 
+    void erase(iterator i1 , iterator i2) {// Remove items in range
 
-    void erase(T index1, T index2) // Remove items in range
-     {
-        if (index1 < 0 || index1 >= vecSize || index2 < 0 || index2 >= vecSize)
-        {
-            cout<< "Index out of range";
+        long long index1 = (i1-ptr),index2 = i1-ptr;
+
+        if (index1 < 0 || index1 >= vecSize || index2 < 0 || index2 >= vecSize) {
+            cout << "Index out of range";
             return;
         }
-        // iterator 1 <= iterator 2 otherwise do nothing
-        if (index1 > index2)
-        {
-            cout<< "Invalid range";
+        if (index1 > index2) {
+            cout << "Invalid range";
             return;
         }
-        for (int i = index1; i < vecSize - (index2 - index1 + 1); i++)
-        {
+        for (int i = index1; i < vecSize - (index2 - index1 + 1); i++) {
             ptr[i] = ptr[i + (index2 - index1 + 1)];
         }
         vecSize -= (index2 - index1 + 1);
     }
-
 
      void clear()  // Delete all vector content
     {
@@ -260,24 +260,23 @@ public:
         vecSize = 0;
     }
 
+    void insert(iterator pos, const T elem) {
 
-     void insert( int pos ,const T elem) // Insert item at iterator (posistion)
-    {
-        int index = pos;
+        long long index = pos - ptr;
 
-        if (index < 0 || index >= vecSize)
-        {
+        if (index < 0 || index >= vecSize) {
             cout<< "index out of range\n";
             return ;
         }
-        if (vecSize >= vecCapacity)
+        if (vecSize >= vecCapacity) {
             this->resize();
-
-        for (int i = vecSize; i > index; i--)
+        }
+        for (int i = vecSize; i > index; i--) {
             ptr[i] = ptr[i - 1];
-
+        }
         ptr[index] = elem;
         vecSize++;
+
     }
 
 
@@ -465,24 +464,24 @@ int main()
     //--------------------------------------------++--------------------------------------------------
 
     //this part tests erase(it) ,erase(it,it) , insert at (it)
-    /*
+
     mmVector<int>vec9(4);
     vec9.push_back(1);
     vec9.push_back(2);
     vec9.push_back(3);
     vec9.push_back(4);
     vec9.push_back(5);
-    cout<<vec9;
-    vec9.erase(3);
-    cout<<vec9;
     vec9.push_back(6);
-    vec9.push_back(7);
-    vec9.push_back(8);
     cout<<vec9;
-    vec9.erase(3,6);
+
+    vec9.erase(vec9.begin()+1 );
     cout<<vec9;
-    vec9.insert(1,7);
+
+    vec9.erase(vec9.begin()+1, vec9.begin()+3);
     cout<<vec9;
-    */
-    
+    vec9.insert(vec9.begin()+3 , 8);
+    cout<<vec9;
+
+
+
 }
